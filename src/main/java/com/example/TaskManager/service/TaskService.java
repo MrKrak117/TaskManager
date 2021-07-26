@@ -24,6 +24,19 @@ public class TaskService {
         return taskDAOS;
     }
 
+    public TaskDAO createTask(final TaskDAO taskDAO){
+        final Task task = new Task();
+
+        task.setId(taskDAO.getId());
+        task.setTaskName(taskDAO.getTaskName());
+        task.setTaskDescription(taskDAO.getTaskDescription());
+        task.setCreationDate(taskDAO.getCreationDate());
+        task.setDueDate(taskDAO.getDueDate());
+        taskRepository.save(task);
+
+        return new TaskDAO(task);
+    }
+
     public TaskDAO getTaskById(final int id){
         final Optional<Task> result = taskRepository.findById(id);
         return result.map(TaskDAO::new).orElse(null);
@@ -36,9 +49,9 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-    public TaskDAO updateTask(final TaskDAO taskDao){
+    public TaskDAO updateTask(final int id, final TaskDAO taskDao){
         Task task;
-        final Optional<Task> result = taskRepository.findById(taskDao.getId());
+        final Optional<Task> result = taskRepository.findById(id);
 
         if(!result.isPresent()){
             return null;
@@ -47,8 +60,8 @@ public class TaskService {
         task = result.get();
         task.setTaskName(taskDao.getTaskName());
         task.setTaskDescription(taskDao.getTaskDescription());
-        task.setCreationDate(task.getCreationDate());
-        task.setDueDate(task.getDueDate());
+        task.setCreationDate(taskDao.getCreationDate());
+        task.setDueDate(taskDao.getDueDate());
 
         return new TaskDAO(taskRepository.save(task));
     }

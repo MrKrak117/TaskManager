@@ -1,7 +1,6 @@
 package com.example.TaskManager.controller;
 
 import com.example.TaskManager.dao.TaskDAO;
-import com.example.TaskManager.entity.Task;
 import com.example.TaskManager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +23,11 @@ public class TaskController {
         return taskService.getAllTask();
     }
 
+    @PostMapping("/task")
+    public TaskDAO createTask(@RequestBody final TaskDAO taskDao){
+        return taskService.createTask(taskDao);
+    }
+
     @GetMapping("/task/{id}")
     public TaskDAO getTaskById(@PathVariable("id")final int id){
         return taskService.getTaskById(id);
@@ -34,11 +38,8 @@ public class TaskController {
         taskService.deleteTask(id);
     }
 
-    @PostMapping("/task")
-    public TaskDAO updateTask(@RequestBody final TaskDAO taskDao){
-        return taskService.updateTask(taskDao);
+    @PostMapping("/task/{id}")
+    public TaskDAO updateTask(@PathVariable("id")final int id, @RequestBody final TaskDAO taskDao){
+        return taskService.updateTask(id, taskDao);
     }
-
-
-
 }

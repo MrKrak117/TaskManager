@@ -76,6 +76,22 @@ public class TaskServiceTest {
     }
 
     @Test
+    public void testCreateTaskTaskIsCreatedAndReturnDAO(){
+        final TaskDAO taskDAO;
+        final Task task = new Task();
+
+        task.setTaskName("SomeName");
+        task.setId(14);
+        task.setTaskDescription("SomeDesc");
+
+        taskDAO = new TaskDAO(task);
+
+        final TaskDAO result = taskService.createTask(taskDAO);
+
+        Assert.assertNotNull(result);
+    }
+
+    @Test
     public void testGetTaskByIdNotFoundReturnsNull(){
         when(taskRepository.findById(2)).thenReturn(Optional.empty());
 
@@ -106,7 +122,7 @@ public class TaskServiceTest {
         when(taskRepository.save(any())).thenReturn(task);
         when(taskRepository.findById(14)).thenReturn(Optional.of(task));
 
-        final TaskDAO result = taskService.updateTask(taskDAO);
+        final TaskDAO result = taskService.updateTask(14, taskDAO);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(taskDAO.getTaskName(), result.getTaskName());
@@ -115,7 +131,7 @@ public class TaskServiceTest {
 
     @Test
     public void testUpdateTaskByIdTaskNotFoundReturnsNull(){
-        final TaskDAO result = taskService.updateTask(new TaskDAO());
+        final TaskDAO result = taskService.updateTask(0, new TaskDAO());
 
         Assert.assertNull(result);
     }
