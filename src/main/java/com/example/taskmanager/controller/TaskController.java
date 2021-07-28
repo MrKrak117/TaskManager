@@ -1,8 +1,7 @@
-package com.example.TaskManager.controller;
+package com.example.taskmanager.controller;
 
-import com.example.TaskManager.dao.TaskDAO;
-import com.example.TaskManager.service.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.taskmanager.dao.TaskDAO;
+import com.example.taskmanager.service.TaskService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +14,11 @@ import java.util.List;
 @RestController
 public class TaskController {
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping("/tasks")
     public List<TaskDAO> getAllTask(){

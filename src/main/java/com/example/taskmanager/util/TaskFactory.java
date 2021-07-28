@@ -1,10 +1,9 @@
-package com.example.TaskManager.util;
+package com.example.taskmanager.util;
 
 import java.sql.Date;
 
 public interface TaskFactory {
 
-    //TODO: Document Factory Pattern
     public int getId();
     public void setId(final int id);
     public String getTaskName();

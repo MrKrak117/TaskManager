@@ -1,20 +1,23 @@
-package com.example.TaskManager.service;
+package com.example.taskmanager.service;
 
-import com.example.TaskManager.dao.TaskDAO;
-import com.example.TaskManager.entity.Task;
-import com.example.TaskManager.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.taskmanager.dao.TaskDAO;
+import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     public List<TaskDAO> getAllTask(){
         final List<TaskDAO> taskDAOS = new ArrayList<>();
@@ -27,10 +30,9 @@ public class TaskService {
     public TaskDAO createTask(final TaskDAO taskDAO){
         final Task task = new Task();
 
-        task.setId(taskDAO.getId());
         task.setTaskName(taskDAO.getTaskName());
         task.setTaskDescription(taskDAO.getTaskDescription());
-        task.setCreationDate(taskDAO.getCreationDate());
+        task.setCreationDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
         task.setDueDate(taskDAO.getDueDate());
         taskRepository.save(task);
 

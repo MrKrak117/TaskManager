@@ -1,44 +1,29 @@
-package com.example.TaskManager.entity;
+package com.example.taskmanager.dao;
 
-import com.example.TaskManager.util.TaskFactory;
+import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.util.TaskFactory;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.sql.Date;
+import java.util.Calendar;
 
-@Entity
-@Table
-public class Task implements TaskFactory {
+public class TaskDAO  implements TaskFactory {
 
     //TODO: Document Factory Pattern
-    @Id
-    @Column
     private int id;
-
-    @Column
     private String taskName;
-
-    @Column
     private String taskDescription;
-
-    @Column
     private Date creationDate;
-
-    @Column
     private Date dueDate;
 
-    public Task() {
+    public TaskDAO() {
     }
 
-    public Task(final int id, final String taskName, final String taskDescription, final Date creationDate,
-                final Date dueDate) {
-        this.id = id;
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.creationDate = creationDate;
-        this.dueDate = dueDate;
+    public TaskDAO(final Task task) {
+        this.id = task.getId();
+        this.taskName = task.getTaskName();
+        this.taskDescription = task.getTaskDescription();
+        this.creationDate = task.getCreationDate();
+        this.dueDate = task.getDueDate();
     }
 
     @Override
@@ -78,7 +63,7 @@ public class Task implements TaskFactory {
 
     @Override
     public void setCreationDate(final Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = new Date(Calendar.getInstance().getTime().getTime());
     }
 
     @Override
@@ -91,4 +76,14 @@ public class Task implements TaskFactory {
         this.dueDate = dueDate;
     }
 
+    @Override
+    public String toString() {
+        return "TaskDAO{" +
+                "id=" + id +
+                ", taskName='" + taskName + '\'' +
+                ", taskDescription='" + taskDescription + '\'' +
+                ", creationDate=" + creationDate +
+                ", dueDate=" + dueDate +
+                '}';
+    }
 }

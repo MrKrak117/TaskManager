@@ -1,6 +1,6 @@
-package com.example.TaskManager.repository;
+package com.example.taskmanager.repository;
 
-import com.example.TaskManager.entity.Task;
+import com.example.taskmanager.entity.Task;
 import org.springframework.data.repository.CrudRepository;
 
 public interface TaskRepository extends CrudRepository<Task, Integer> {

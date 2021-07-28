@@ -1,28 +1,47 @@
-package com.example.TaskManager.dao;
+package com.example.taskmanager.entity;
 
-import com.example.TaskManager.entity.Task;
-import com.example.TaskManager.util.TaskFactory;
+import com.example.taskmanager.util.TaskFactory;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Date;
 
-public class TaskDAO  implements TaskFactory {
+@Entity
+@Table
+public class Task implements TaskFactory {
 
     //TODO: Document Factory Pattern
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private int id;
+
+    @Column
     private String taskName;
+
+    @Column
     private String taskDescription;
+
+    @Column
     private Date creationDate;
+
+    @Column
     private Date dueDate;
 
-    public TaskDAO() {
+    public Task() {
     }
 
-    public TaskDAO(final Task task) {
-        this.id = task.getId();
-        this.taskName = task.getTaskName();
-        this.taskDescription = task.getTaskDescription();
-        this.creationDate = task.getCreationDate();
-        this.dueDate = task.getDueDate();
+    public Task(final int id, final String taskName, final String taskDescription, final Date creationDate,
+                final Date dueDate) {
+        this.id = id;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.creationDate = creationDate;
+        this.dueDate = dueDate;
     }
 
     @Override
@@ -75,14 +94,4 @@ public class TaskDAO  implements TaskFactory {
         this.dueDate = dueDate;
     }
 
-    @Override
-    public String toString() {
-        return "TaskDAO{" +
-                "id=" + id +
-                ", taskName='" + taskName + '\'' +
-                ", taskDescription='" + taskDescription + '\'' +
-                ", creationDate=" + creationDate +
-                ", dueDate=" + dueDate +
-                '}';
-    }
 }
