@@ -44,6 +44,13 @@ public class Task implements TaskFactory {
         this.dueDate = dueDate;
     }
 
+    public Task(String taskName, String taskDescription, Date creationDate, Date dueDate) {
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.creationDate = creationDate;
+        this.dueDate = dueDate;
+    }
+
     @Override
     public int getId() {
         return id;

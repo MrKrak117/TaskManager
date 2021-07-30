@@ -2,10 +2,8 @@ package com.example.taskmanager.util;
 
 import java.sql.Date;
 
-public interface TaskFactory {
+public interface TaskFactory extends Entity{
 
-    public int getId();
-    public void setId(final int id);
     public String getTaskName();
     public void setTaskName(final String taskName);
     public String getTaskDescription();

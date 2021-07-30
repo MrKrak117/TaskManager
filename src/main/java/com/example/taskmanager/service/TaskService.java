@@ -1,71 +1,80 @@
 package com.example.taskmanager.service;
 
+import com.example.taskmanager.command.DeleteEntity;
+import com.example.taskmanager.command.EntityOperationExecutor;
+import com.example.taskmanager.command.GetEntity;
+import com.example.taskmanager.command.SaveEntity;
 import com.example.taskmanager.dao.TaskDAO;
 import com.example.taskmanager.entity.Task;
-import com.example.taskmanager.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    private final TaskRepository taskRepository;
-
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+    @Autowired
+    private  EntityOperationExecutor entityOperationExecutor;
 
     public List<TaskDAO> getAllTask(){
+
+
+        final List<Task> result = entityOperationExecutor.executeOperation(new GetEntity());
+
+
         final List<TaskDAO> taskDAOS = new ArrayList<>();
 
-        taskRepository.findAll().forEach(task -> taskDAOS.add(new TaskDAO(task)));
+        result.forEach(task -> taskDAOS.add(new TaskDAO(task)));
 
         return taskDAOS;
     }
 
     public TaskDAO createTask(final TaskDAO taskDAO){
-        final Task task = new Task();
+        final Task task = new Task(taskDAO.getTaskName(), taskDAO.getTaskDescription(),new java.sql.Date(Calendar.getInstance().getTime().getTime()),
+                taskDAO.getDueDate());
 
-        task.setTaskName(taskDAO.getTaskName());
+        /*task.setTaskName(taskDAO.getTaskName());
         task.setTaskDescription(taskDAO.getTaskDescription());
-        task.setCreationDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-        task.setDueDate(taskDAO.getDueDate());
-        taskRepository.save(task);
+        task.setCreationDate());
+        task.setDueDate(taskDAO.getDueDate());*/
 
-        return new TaskDAO(task);
+        final Task result = entityOperationExecutor.executeOperation(new SaveEntity(), task);
+
+        return new TaskDAO(result);
     }
 
     public TaskDAO getTaskById(final int id){
-        final Optional<Task> result = taskRepository.findById(id);
-        return result.map(TaskDAO::new).orElse(null);
+        final Task task = new Task();
+        task.setId(id);
+
+        final Task result = entityOperationExecutor.executeOperation(new GetEntity(), task);
+
+        return new TaskDAO(result);
     }
 
     public void deleteTask(final int id){
         final Task task = new Task();
         task.setId(id);
 
-        taskRepository.delete(task);
+        entityOperationExecutor.executeOperation(new DeleteEntity(), task);
     }
 
     public TaskDAO updateTask(final int id, final TaskDAO taskDao){
-        Task task;
-        final Optional<Task> result = taskRepository.findById(id);
+        Task task = new Task();
+        task.setId(id);
 
-        if(!result.isPresent()){
-            return null;
-        }
+        task = entityOperationExecutor.executeOperation(new GetEntity(), task);
 
-        task = result.get();
         task.setTaskName(taskDao.getTaskName());
         task.setTaskDescription(taskDao.getTaskDescription());
-        task.setCreationDate(taskDao.getCreationDate());
         task.setDueDate(taskDao.getDueDate());
 
-        return new TaskDAO(taskRepository.save(task));
+        final Task result = entityOperationExecutor.executeOperation(new SaveEntity(), task);
+
+        return new TaskDAO(result);
     }
 
 }
