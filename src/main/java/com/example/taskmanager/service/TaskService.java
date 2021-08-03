@@ -1,12 +1,9 @@
 package com.example.taskmanager.service;
 
-import com.example.taskmanager.command.DeleteEntity;
 import com.example.taskmanager.command.EntityOperationExecutor;
-import com.example.taskmanager.command.GetEntity;
-import com.example.taskmanager.command.SaveEntity;
 import com.example.taskmanager.dao.TaskDAO;
 import com.example.taskmanager.entity.Task;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.taskmanager.util.TaskType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,15 +13,14 @@ import java.util.List;
 @Service
 public class TaskService {
 
-    @Autowired
-    private  EntityOperationExecutor entityOperationExecutor;
+    private final EntityOperationExecutor entityOperationExecutor;
+
+    public TaskService(EntityOperationExecutor entityOperationExecutor) {
+        this.entityOperationExecutor = entityOperationExecutor;
+    }
 
     public List<TaskDAO> getAllTask(){
-
-
-        final List<Task> result = entityOperationExecutor.executeOperation(new GetEntity());
-
-
+        final List<Task> result = entityOperationExecutor.executeOperation();
         final List<TaskDAO> taskDAOS = new ArrayList<>();
 
         result.forEach(task -> taskDAOS.add(new TaskDAO(task)));
@@ -35,13 +31,7 @@ public class TaskService {
     public TaskDAO createTask(final TaskDAO taskDAO){
         final Task task = new Task(taskDAO.getTaskName(), taskDAO.getTaskDescription(),new java.sql.Date(Calendar.getInstance().getTime().getTime()),
                 taskDAO.getDueDate());
-
-        /*task.setTaskName(taskDAO.getTaskName());
-        task.setTaskDescription(taskDAO.getTaskDescription());
-        task.setCreationDate());
-        task.setDueDate(taskDAO.getDueDate());*/
-
-        final Task result = entityOperationExecutor.executeOperation(new SaveEntity(), task);
+        final Task result = entityOperationExecutor.executeOperation(task, TaskType.SAVE);
 
         return new TaskDAO(result);
     }
@@ -50,7 +40,7 @@ public class TaskService {
         final Task task = new Task();
         task.setId(id);
 
-        final Task result = entityOperationExecutor.executeOperation(new GetEntity(), task);
+        final Task result = entityOperationExecutor.executeOperation(task, TaskType.GET);
 
         return new TaskDAO(result);
     }
@@ -59,20 +49,20 @@ public class TaskService {
         final Task task = new Task();
         task.setId(id);
 
-        entityOperationExecutor.executeOperation(new DeleteEntity(), task);
+        entityOperationExecutor.executeOperation(task, TaskType.DELETE);
     }
 
     public TaskDAO updateTask(final int id, final TaskDAO taskDao){
         Task task = new Task();
         task.setId(id);
 
-        task = entityOperationExecutor.executeOperation(new GetEntity(), task);
+        task = entityOperationExecutor.executeOperation(task, TaskType.SAVE);
 
         task.setTaskName(taskDao.getTaskName());
         task.setTaskDescription(taskDao.getTaskDescription());
         task.setDueDate(taskDao.getDueDate());
 
-        final Task result = entityOperationExecutor.executeOperation(new SaveEntity(), task);
+        final Task result = entityOperationExecutor.executeOperation(task, TaskType.SAVE);
 
         return new TaskDAO(result);
     }

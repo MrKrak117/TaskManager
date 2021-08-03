@@ -1,18 +1,18 @@
 package com.example.taskmanager.command;
 
 import com.example.taskmanager.entity.Task;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-
+import com.example.taskmanager.util.TaskType;
+import org.springframework.stereotype.Component;
 import java.util.List;
 
+@Component
 public class GetEntity implements EntityOperation{
 
-    @Autowired
-    private ApplicationContext appContext;
+    private final EntityReceiverService entityReceiver;
 
-
-    private final EntityReceiverService entityReceiver = new EntityReceiverService();
+    public GetEntity(EntityReceiverService entityReceiver) {
+        this.entityReceiver = entityReceiver;
+    }
 
     @Override
     public Task execute(Task task) {
@@ -22,5 +22,10 @@ public class GetEntity implements EntityOperation{
     @Override
     public List<Task> execute() {
         return entityReceiver.getAllEntities();
+    }
+
+    @Override
+    public boolean canHandle(TaskType taskType) {
+        return taskType.equals(TaskType.GET);
     }
 }

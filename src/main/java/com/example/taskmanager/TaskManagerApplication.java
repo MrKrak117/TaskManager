@@ -3,8 +3,10 @@ package com.example.taskmanager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan
 public class TaskManagerApplication {
 
 	private static ApplicationContext applicationContext;
