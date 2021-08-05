@@ -1,16 +1,17 @@
 package com.example.taskmanager.service;
 
+import com.example.taskmanager.command.EntityOperationExecutor;
 import com.example.taskmanager.dao.TaskDAO;
 import com.example.taskmanager.entity.Task;
-import com.example.taskmanager.repository.TaskRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
 import java.text.DateFormat;
@@ -18,28 +19,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class TaskServiceTest {
-/*
+
     @Mock
-    private TaskRepository taskRepository;
+    EntityOperationExecutor entityOperationExecutor;
 
-    @InjectMocks
-    private final TaskService taskService = new TaskService(taskRepository);
+    private TaskService taskService;
+    final List<Task> tasks = new ArrayList<>();
 
-    private static final List<Task> tasks = new ArrayList<>();
-
-    @BeforeAll
-    public static void init() throws ParseException {
+    @BeforeEach
+    void init () throws ParseException {
         DateFormat df = new SimpleDateFormat("MM-dd-yyyy");
 
         tasks.add(new Task(1,"OOP Basics", "OOP Basic concepts training",
@@ -50,95 +47,45 @@ public class TaskServiceTest {
                 new Date(df.parse("07-18-2020").getTime()), new Date(df.parse("07-22-2020").getTime())));
         tasks.add(new Task(4,"JPA Training", "JPA Integration with Spring",
                 new Date(df.parse("07-22-2020").getTime()), new Date(df.parse("07-24-2020").getTime())));
+
+        taskService = new TaskService(entityOperationExecutor);
+
+        Mockito.lenient().when(entityOperationExecutor.executeOperation()).thenReturn(tasks).thenReturn(new ArrayList<>());
+        Mockito.lenient().when(entityOperationExecutor.executeOperation(any(), any())).thenReturn(tasks.get(1));
     }
 
     @Test
     void testGetAllTaskReturnsListWithDaos(){
-        when(taskRepository.findAll()).thenReturn(tasks);
-
         final List<TaskDAO> result = taskService.getAllTask();
-
         Assertions.assertEquals(4,result.size());
     }
 
     @Test
-    void testGetAllTaskNoRecordsReturnsEmptyList(){
-        when(taskRepository.findAll()).thenReturn(new ArrayList<>());
-
-        final List<TaskDAO> result = taskService.getAllTask();
-
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(0,result.size());
-    }
-
-    @Test
-    void testGetTaskByIdReturnsDao(){
-        when(taskRepository.findById(2)).thenReturn(tasks.stream().filter( task -> task.getId() == 2).findFirst());
-
-        final TaskDAO result = taskService.getTaskById(2);
-
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(tasks.get(1).getTaskName(), result.getTaskName());
-    }
-
-    @Test
-    void testCreateTaskTaskIsCreatedAndReturnDAO(){
-        final TaskDAO taskDAO;
-        final Task task = new Task();
-
-        task.setTaskName("SomeName");
-        task.setId(14);
-        task.setTaskDescription("SomeDesc");
-
-        taskDAO = new TaskDAO(task);
-
+    void testCreateTaskIsCreatedReturningDao(){
+        final TaskDAO taskDAO = new TaskDAO(tasks.get(1));
         final TaskDAO result = taskService.createTask(taskDAO);
 
         Assertions.assertNotNull(result);
+        Assertions.assertEquals(taskDAO.getTaskName(), result.getTaskName());
     }
 
     @Test
-    void testGetTaskByIdNotFoundReturnsNull(){
-        when(taskRepository.findById(2)).thenReturn(Optional.empty());
-
+    void testGetTaskByIdReturnsTaskDao(){
         final TaskDAO result = taskService.getTaskById(2);
-
-        Assertions.assertNull(result);
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    void testDeleteTaskByIdDeletedMethodIsExecuted(){
-
-        taskService.deleteTask(17);
-
-        verify(taskRepository, times(1)).delete(any());
+    void testDeleteTaskIsDeleted(){
+        taskService.deleteTask(2);
+        verify(entityOperationExecutor,times(1)).executeOperation(any(), any());
     }
 
     @Test
-    void testUpdateTaskByIdTaskIsUpdated(){
-        final TaskDAO taskDAO;
-        final Task task = new Task();
-
-        task.setTaskName("SomeName");
-        task.setId(14);
-        task.setTaskDescription("SomeDesc");
-
-        taskDAO = new TaskDAO(task);
-
-        when(taskRepository.save(any())).thenReturn(task);
-        when(taskRepository.findById(14)).thenReturn(Optional.of(task));
-
-        final TaskDAO result = taskService.updateTask(14, taskDAO);
+    void testUpdateTaskIsUpdated(){
+        final TaskDAO result = taskService.updateTask(2, new TaskDAO(tasks.get(1)));
+        verify(entityOperationExecutor,times(2)).executeOperation(any(), any());
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(taskDAO.getTaskName(), result.getTaskName());
-
     }
-
-    @Test
-    void testUpdateTaskByIdTaskNotFoundReturnsNull(){
-        final TaskDAO result = taskService.updateTask(0, new TaskDAO());
-
-        Assertions.assertNull(result);
-    }*/
 }

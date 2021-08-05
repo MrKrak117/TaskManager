@@ -9,12 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Date;
+import java.util.Objects;
 
 @Entity
 @Table
 public class Task implements TaskFactory {
 
-    //TODO: Document Factory Pattern
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
@@ -101,4 +101,16 @@ public class Task implements TaskFactory {
         this.dueDate = dueDate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription, task.taskDescription) && Objects.equals(creationDate, task.creationDate) && Objects.equals(dueDate, task.dueDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, taskName, taskDescription, creationDate, dueDate);
+    }
 }

@@ -56,7 +56,7 @@ public class TaskService {
         Task task = new Task();
         task.setId(id);
 
-        task = entityOperationExecutor.executeOperation(task, TaskType.SAVE);
+        task = entityOperationExecutor.executeOperation(task, TaskType.GET);
 
         task.setTaskName(taskDao.getTaskName());
         task.setTaskDescription(taskDao.getTaskDescription());
